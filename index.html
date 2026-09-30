@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Take It Apart</title>
+  <meta name="description" content="Take objects apart in 3D, part by part. Orbit, zoom and click any piece to see what it is.">
+  <link rel="icon" type="image/png" href="icon.png">
+  <link rel="stylesheet" href="style.css">
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/",
+      "anthropic-sdk": "https://cdn.jsdelivr.net/npm/@anthropic-ai/sdk@0.129.0/+esm"
+    }
+  }
+  </script>
+  <script type="module" src="js/app.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <button class="icon-btn only-narrow" id="toggle-sidebar" aria-label="Objects" title="Objects">
+      <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14"/></svg>
+    </button>
+    <div class="title">
+      <h1 id="object-name">Take It Apart</h1>
+      <span id="object-sub"></span>
+    </div>
+    <button class="icon-btn" id="reset-view" aria-label="Reset view" title="Frame the whole object again">
+      <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="M10 1v4M10 15v4M1 10h4M15 10h4"/></svg>
+    </button>
+    <button class="icon-btn" id="toggle-inspector" aria-label="Parts" title="Show or hide the parts list">
+      <svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2.5" y="3.5" width="15" height="13" rx="2"/><path d="M12.5 3.5v13"/></svg>
+    </button>
+  </header>
+
+  <div class="layout">
+    <aside id="sidebar" class="panel">
+      <div class="panel-scroll">
+        <h2>Example</h2>
+        <ul id="examples" class="object-list"></ul>
+        <h2>Your objects</h2>
+        <div id="generation" hidden></div>
+        <ul id="saved" class="object-list"></ul>
+        <p id="saved-empty" class="hint">Type an object or drop in a photo to take it apart.</p>
+      </div>
+      <div class="panel-foot">
+        <button class="primary wide" id="new-object">+ New Object…</button>
+        <div class="foot-row">
+          <button class="link" id="open-settings">Settings</button>
+          <button class="link" id="open-feedback">Feedback</button>
+        </div>
+      </div>
+    </aside>
+
+    <main id="stage">
+      <div id="viewport"></div>
+      <div class="controlbar" role="group" aria-label="Take apart controls">
+        <button class="icon-btn round" id="play" aria-label="Take it apart"></button>
+        <span class="lbl">Assembled</span>
+        <input type="range" id="explode" min="0" max="1" step="0.001" value="0" aria-label="How far apart">
+        <span class="lbl">Taken apart</span>
+        <label class="check"><input type="checkbox" id="guides" checked> Guide lines</label>
+      </div>
+    </main>
+
+    <aside id="inspector" class="panel">
+      <div id="part-card" hidden></div>
+      <div id="about">
+        <p id="summary"></p>
+        <p class="hint">Drag to orbit · scroll or pinch to zoom · right-drag to pan · tap a part to identify it · double-click a part in the list to zoom to it</p>
+      </div>
+      <input type="search" id="part-search" placeholder="Find a part" aria-label="Find a part">
+      <div id="parts" class="panel-scroll"></div>
+    </aside>
+  </div>
+  <div id="scrim" hidden></div>
+
+  <dialog id="new-dialog">
+    <form method="dialog" id="new-form">
+      <h2>Take Something Apart</h2>
+      <p class="hint">Name an object, drop in a photo of one, or both. Claude designs every part and how it comes apart; this takes a minute or two.</p>
+      <input type="text" id="new-text" placeholder="e.g. a V8 car engine, a mechanical wristwatch, a DSLR camera" autocomplete="off">
+      <label id="drop" class="drop">
+        <input type="file" id="new-photo" accept="image/*" hidden>
+        <img id="drop-preview" alt="" hidden>
+        <span id="drop-label">Drop a photo here or <u>choose one</u> (optional)</span>
+      </label>
+      <p id="need-key" class="notice" hidden>Add your Anthropic API key in <button type="button" class="link" id="new-settings">Settings</button> to generate new objects.</p>
+      <div class="actions">
+        <button type="button" id="new-cancel">Cancel</button>
+        <button class="primary" id="new-go" value="go">Take It Apart</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="settings-dialog">
+    <form method="dialog">
+      <h2>Settings</h2>
+      <label class="field">Anthropic API key
+        <input type="password" id="api-key" placeholder="sk-ant-…" autocomplete="off" spellcheck="false">
+      </label>
+      <p class="hint">Only used to ask Claude to design new objects. It's saved in this browser only and sent straight to Anthropic, nowhere else. The built-in rocket works without it. Get a key at <a href="https://console.anthropic.com/" target="_blank" rel="noopener">console.anthropic.com</a>.</p>
+      <div class="actions">
+        <button type="button" id="key-remove">Remove Key</button>
+        <button class="primary" value="save" id="key-save">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="feedback-dialog">
+    <form method="dialog">
+      <h2>Feedback</h2>
+      <p class="hint">What's working, what isn't, what you'd like to take apart next. Send opens a pre-filled GitHub issue; nothing is sent until you submit it there.</p>
+      <textarea id="feedback-text" rows="6"></textarea>
+      <div class="actions">
+        <button type="button" id="feedback-cancel">Cancel</button>
+        <button class="primary" value="send" id="feedback-send">Send…</button>
+      </div>
+    </form>
+  </dialog>
+
+  <noscript><p class="noscript">Take It Apart needs JavaScript and WebGL.</p></noscript>
+</body>
+</html>

@@ -1,0 +1,158 @@
+{
+  "fallbacks" : "default",
+  "max_tokens" : 64000,
+  "messages" : [
+    {
+      "content" : [
+        {
+          "text" : "Take this apart: __DESCRIPTION__",
+          "type" : "text"
+        }
+      ],
+      "role" : "user"
+    }
+  ],
+  "model" : "claude-opus-5-5",
+  "output_config" : {
+    "effort" : "high",
+    "format" : {
+      "schema" : {
+        "additionalProperties" : false,
+        "properties" : {
+          "name" : {
+            "type" : "string"
+          },
+          "parts" : {
+            "items" : {
+              "additionalProperties" : false,
+              "properties" : {
+                "color" : {
+                  "type" : "string"
+                },
+                "description" : {
+                  "type" : "string"
+                },
+                "dims" : {
+                  "items" : {
+                    "type" : "number"
+                  },
+                  "type" : "array"
+                },
+                "explode" : {
+                  "items" : {
+                    "type" : "number"
+                  },
+                  "type" : "array"
+                },
+                "group" : {
+                  "type" : "string"
+                },
+                "id" : {
+                  "type" : "string"
+                },
+                "material" : {
+                  "enum" : [
+                    "paintedMetal",
+                    "brushedAluminum",
+                    "steel",
+                    "titanium",
+                    "copper",
+                    "gold",
+                    "goldFoil",
+                    "carbonFiber",
+                    "rubber",
+                    "glass",
+                    "plastic",
+                    "ceramic",
+                    "solarCell",
+                    "fabric",
+                    "emissive"
+                  ],
+                  "type" : "string"
+                },
+                "name" : {
+                  "type" : "string"
+                },
+                "points" : {
+                  "items" : {
+                    "type" : "number"
+                  },
+                  "type" : "array"
+                },
+                "position" : {
+                  "items" : {
+                    "type" : "number"
+                  },
+                  "type" : "array"
+                },
+                "radialCount" : {
+                  "type" : "integer"
+                },
+                "rotation" : {
+                  "items" : {
+                    "type" : "number"
+                  },
+                  "type" : "array"
+                },
+                "shape" : {
+                  "enum" : [
+                    "box",
+                    "cylinder",
+                    "tube",
+                    "frustum",
+                    "cone",
+                    "sphere",
+                    "dome",
+                    "torus",
+                    "capsule",
+                    "lathe",
+                    "pipe",
+                    "prism",
+                    "grid"
+                  ],
+                  "type" : "string"
+                },
+                "step" : {
+                  "type" : "integer"
+                }
+              },
+              "required" : [
+                "id",
+                "name",
+                "group",
+                "description",
+                "shape",
+                "dims",
+                "points",
+                "position",
+                "rotation",
+                "material",
+                "color",
+                "explode",
+                "step",
+                "radialCount"
+              ],
+              "type" : "object"
+            },
+            "type" : "array"
+          },
+          "summary" : {
+            "type" : "string"
+          }
+        },
+        "required" : [
+          "name",
+          "summary",
+          "parts"
+        ],
+        "type" : "object"
+      },
+      "type" : "json_schema"
+    }
+  },
+  "stream" : true,
+  "system" : "You are a mechanical design engineer who builds exploded-view 3D models for a teardown viewer.\nGiven an object (a name, a description, and\/or a photo), produce a precise parts breakdown that the viewer will build out of primitive shapes.\n\nCoordinates and units\n- Units are real-world metres. Y is up. The object's main axis should be Y when it has one (rockets, bottles, towers); cars and similar sit on the ground plane y = 0 with length along X.\n- Every shape is centred on its own origin with Y as its main axis. `position` places that origin in the assembly; `rotation` is degrees about X, then Y, then Z.\n- Assembled parts must fit together the way the real object does: shells enclose internals, bolts sit in holes, shafts pass through bearings. No floating gaps, no accidental overlaps between solid parts.\n\nShapes and what `dims` \/ `points` mean\n- box: dims [width(X), height(Y), depth(Z), cornerRadius]\n- cylinder: [radius, height] · tube (hollow): [outerRadius, innerRadius, height] · frustum: [bottomRadius, topRadius, height] · cone: [radius, height]\n- sphere: [radius] · dome: [radius, height] half-ellipsoid, flat side at y=0 bulging up · torus: [ringRadius, pipeRadius] (lies in the XZ plane) · capsule: [radius, totalHeight]\n- lathe: points [r0,y0, r1,y1, …] a profile listed bottom→top revolved around Y (end at r=0 to close it); dims [startDeg, sweepDeg] or [] for a full revolution. Use it for nozzles, bottles, pistons, wheels, lenses, domes, bells, anything turned.\n- pipe: points [x0,y0,z0, x1,y1,z1, …] a smoothed path in assembly coordinates (use position [0,0,0]); dims [radius]. Use for hoses, wires, exhausts, frames.\n- prism: points [x0,y0, …] a 2D outline in the XY plane extruded along Z; dims [thickness]. Use for brackets, fins, blades, plates with shaped outlines.\n- grid: dims [width, height, depth, cellsX, cellsY, barThickness] a lattice in the XY plane. Use for grilles, radiators, grid fins.\nPut unused arrays as [].\n\nSymmetry\n- radialCount N makes N copies spread evenly around the vertical Y axis through the world origin (copy k is rotated by k·360\/N degrees, including its position and explode vector). Use it for engine rings, wheel bolts, fins, cylinders in a radial engine. Use 1 otherwise, and author mirrored or linear repeats as separate parts.\n\nTaking it apart\n- `explode` is the offset (metres, assembly frame) the part moves when the object is fully taken apart. Move each part outward along the direction it would really come off: shells lift away, internals slide out along their axis, fasteners back out. Spread parts so that nothing overlaps when fully exploded — typical offsets are 0.5–2× the object's size, larger for parts deep inside.\n- `step` orders disassembly: 0 for the outermost covers, then increasing through major assemblies, down to the innermost components (up to about 5).\n\nDetail and fidelity\n- Aim for 40–120 part entries (radial copies make the visible piece count higher). Include the internal components a real teardown would reveal, not just the outer shell. Give each part a proper engineering name, the subsystem `group` it belongs to (6–12 groups), and a one-sentence description of what it does.\n- Pick `material` from the enum and a realistic hex `color`. Use real proportions; if working from a photo, match its colours and design.\n- `id` is a short unique kebab-case slug.",
+  "thinking" : {
+    "type" : "adaptive"
+  }
+}
