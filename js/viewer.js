@@ -98,7 +98,8 @@ export class Viewer {
     this.container3d.add(this.guides);
 
     const size = this.#bounds(0).getSize(new THREE.Vector3());
-    this.isLong = size.y > 2.2 * Math.max(size.x, size.z);
+    this.fixedRotation = Array.isArray(blueprint.displayRotation) && blueprint.displayRotation.length === 3 ? blueprint.displayRotation : null;
+    this.isLong = !this.fixedRotation && size.y > 2.2 * Math.max(size.x, size.z);
     this.#applyOrientation();
     this.setExplode(0);
     this.fit();
@@ -107,6 +108,13 @@ export class Viewer {
 
   /** Long, thin objects (rockets, pens) lie across a wide screen but stand up on a tall one. */
   #applyOrientation() {
+    if (this.fixedRotation) {
+      if (this.laidFlat === 'fixed') return false;
+      this.laidFlat = 'fixed';
+      this.container3d.quaternion.copy(orientation(this.fixedRotation));
+      this.container3d.updateMatrixWorld(true);
+      return true;
+    }
     const flat = this.isLong && this.camera.aspect >= 1;
     if (flat === this.laidFlat) return false;
     this.laidFlat = flat;

@@ -300,8 +300,8 @@ $('feedback-send').onclick = (e) => {
 // ---------- Start ----------
 
 (async () => {
-  const rocket = await fetch('data/rocket.json').then((r) => r.json());
-  state.examples = [sanitize(rocket)];
+  const examples = await fetch('data/examples.json').then((r) => r.json());
+  state.examples = examples.map(sanitize);
   state.saved = state.saved.map(sanitize);
   updatePlay(false);
   open(state.examples[0]);
