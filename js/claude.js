@@ -41,7 +41,7 @@ export function sanitize(b) {
       name: p.name || `Part ${i + 1}`, group: p.group || 'Parts', description: p.description || '',
       dims: nums(p.dims), points: nums(p.points),
       position: vec3(p.position), rotation: vec3(p.rotation), explode: vec3(p.explode),
-      step: Math.max(0, Math.min(p.step | 0, 20)), radialCount: Math.max(1, Math.min(p.radialCount | 0 || 1, 36)),
+      step: Math.max(0, Math.min(p.step | 0, 20)), radialCount: Math.max(1, Math.min(p.radialCount | 0 || 1, 72)),
     };
   });
   return b;
