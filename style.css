@@ -125,6 +125,9 @@ button.link:hover { color: var(--text); text-decoration: underline; }
 /* Inspector */
 #about { padding: 14px 14px 4px; border-bottom: 1px solid var(--line); }
 #about p { margin: 0 0 8px; }
+#about { max-height: 42%; overflow-y: auto; }
+#overview h3 { font-size: 13px; margin: 10px 0 6px; }
+#overview p { font-size: 13px; }
 #part-card { padding: 14px; border-bottom: 1px solid var(--line); max-height: 45%; overflow-y: auto; }
 #part-card .head { display: flex; align-items: baseline; gap: 8px; }
 #part-card h3 { margin: 0; font-size: 17px; flex: 1; }

@@ -17,7 +17,7 @@ On a phone, the ☰ button opens the object list and the panel button opens the 
 
 ## Taking apart something new
 
-The five examples (a rocket, an electric car drive unit, a camera drone, a mechanical watch and a jet engine) need nothing. To make new objects you need your own [Anthropic API key](https://console.anthropic.com/):
+The six examples (a rocket, an electric car drive unit, a camera drone, a mechanical watch, a jet engine and a road bicycle) need nothing. Each has a **What it is** overview in the parts panel explaining how the object works. To make new objects you need your own [Anthropic API key](https://console.anthropic.com/):
 
 1. Open **Settings** (bottom of the object list) and paste your key. It's saved in this browser only and sent straight to Anthropic, never anywhere else.
 2. Click **New Object…**, then type what it is ("a V8 car engine"), drop in a photo, or both.

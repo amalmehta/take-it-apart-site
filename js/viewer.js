@@ -79,13 +79,16 @@ export class Viewer {
         const mesh = new THREE.Mesh(geometry, materialFor(part.material, part.color));
         mesh.castShadow = mesh.receiveShadow = true;
         mesh.userData.partId = part.id;
-        const base = new THREE.Vector3(...part.position).applyQuaternion(spin);
+        // radialOrigin (built-in examples): spin copies around their own centre and move them as one group.
+        const pivot = Array.isArray(part.radialOrigin) ? new THREE.Vector3(...part.radialOrigin) : new THREE.Vector3();
+        const base = new THREE.Vector3(...part.position).sub(pivot).applyQuaternion(spin).add(pivot);
         mesh.quaternion.copy(spin).multiply(orientation(part.rotation));
         mesh.position.copy(base);
-        const offset = new THREE.Vector3(...part.explode).applyQuaternion(spin);
+        const offset = new THREE.Vector3(...part.explode);
+        if (!part.radialOrigin) offset.applyQuaternion(spin);
         const localCenter = geometry.boundingBox.getCenter(new THREE.Vector3());
         this.container3d.add(mesh);
-        this.instances.push({ id: part.id, mesh, base, offset, step: part.step | 0, localCenter });
+        this.instances.push({ id: part.id, mesh, base, offset, step: part.step | 0, localCenter, guide: !part.radialOrigin || k === 0 });
       }
       this.maxStep = Math.max(this.maxStep, part.step | 0);
     }
@@ -154,7 +157,7 @@ export class Viewer {
     const verts = [];
     if (this.showGuides && this.explode > 0.01) {
       for (const inst of this.instances) {
-        if (inst.offset.lengthSq() < 1e-6) continue;
+        if (!inst.guide || inst.offset.lengthSq() < 1e-6) continue;
         const moved = inst.mesh.position.clone().sub(inst.base);
         if (moved.length() < 0.05 * this.scale) continue;
         const now = inst.localCenter.clone().applyQuaternion(inst.mesh.quaternion).add(inst.mesh.position);

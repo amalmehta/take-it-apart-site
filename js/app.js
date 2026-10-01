@@ -96,6 +96,12 @@ function open(b) {
   $('object-sub').textContent = `${pieceCount(b)} pieces`;
   document.title = `${b.name} — Take It Apart`;
   $('summary').textContent = b.summary;
+  $('overview').hidden = !b.overview;
+  $('overview-text').replaceChildren(...(b.overview || '').split(/\n\s*\n/).filter(Boolean).map((t) => {
+    const para = document.createElement('p');
+    para.textContent = t.trim();
+    return para;
+  }));
   $('part-search').value = '';
   viewer.load(b);
   renderLibrary();
