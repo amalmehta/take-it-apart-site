@@ -128,7 +128,12 @@ button.link:hover { color: var(--text); text-decoration: underline; }
 #about { max-height: 42%; overflow-y: auto; }
 #overview h3 { font-size: 13px; margin: 10px 0 6px; }
 #overview p { font-size: 13px; }
-#part-card { padding: 14px; border-bottom: 1px solid var(--line); max-height: 45%; overflow-y: auto; }
+#part-card { padding: 14px; border-bottom: 1px solid var(--line); max-height: 60%; overflow-y: auto; }
+#part-card section { margin-top: 12px; }
+#part-card h4 { margin: 0 0 3px; font-size: 13px; }
+#part-card section p { margin: 0; font-size: 13px; }
+#part-card ul { margin: 0; padding-left: 18px; font-size: 13px; }
+#part-card li { margin: 2px 0; }
 #part-card .head { display: flex; align-items: baseline; gap: 8px; }
 #part-card h3 { margin: 0; font-size: 17px; flex: 1; }
 #part-card p { margin: 6px 0 10px; }

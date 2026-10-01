@@ -221,6 +221,7 @@ export function materialFor(kind, hex) {
     case 'solarCell': set(0.6, 0.22); m.map = solarGrid(color); m.color.set('#ffffff'); break;
     case 'fabric': set(0, 1); break;
     case 'emissive': set(0, 0.5); m.emissive.set(color); break;
+    case 'castMetal': set(0.55, 0.6); break;
     default: set(0.2, 0.5);
   }
   if (m.map) m.map.colorSpace = THREE.SRGBColorSpace;
@@ -231,5 +232,5 @@ export function materialFor(kind, hex) {
 export const MATERIAL_NAMES = {
   paintedMetal: 'Painted metal', brushedAluminum: 'Brushed aluminium', steel: 'Steel', titanium: 'Titanium',
   copper: 'Copper', gold: 'Gold', goldFoil: 'Gold foil (MLI)', carbonFiber: 'Carbon fibre', rubber: 'Rubber',
-  glass: 'Glass', plastic: 'Plastic', ceramic: 'Ceramic', solarCell: 'Solar cells', fabric: 'Fabric', emissive: 'Light / glow',
+  glass: 'Glass', plastic: 'Plastic', ceramic: 'Ceramic', solarCell: 'Solar cells', fabric: 'Fabric', emissive: 'Light / glow', castMetal: 'Cast metal',
 };

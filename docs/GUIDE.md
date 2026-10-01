@@ -8,7 +8,7 @@ Open **https://amalmehta.github.io/take-it-apart-site/** in a recent browser wit
 |---|---|
 | Take it apart / put it back | Press the round button in the bottom bar (or Space), or drag the slider |
 | Look around | Drag to orbit, scroll or pinch to zoom, right-drag or two-finger drag to pan |
-| Identify a part | Click or tap it, or pick it in the parts list |
+| Identify a part | Click or tap it, or pick it in the parts list; its card explains how it works, what it's made of, key numbers and a did-you-know |
 | Get close to a part | Double-click it in the list, or press **Zoom to Part** |
 | Get the whole view back | The crosshair button at the top right |
 | Find a part by name | Type in **Find a part** |

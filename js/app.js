@@ -151,7 +151,7 @@ function renderCard(id) {
     <p></p>
     <dl>
       <dt>Assembly</dt><dd class="g"></dd>
-      <dt>Material</dt><dd>${MATERIAL_NAMES[p.material] ?? p.material}</dd>
+      ${p.details ? '' : `<dt>Material</dt><dd>${MATERIAL_NAMES[p.material] ?? p.material}</dd>`}
       ${p.radialCount > 1 ? `<dt>Count</dt><dd>${p.radialCount}</dd>` : ''}
       <dt>Comes off</dt><dd>Stage ${(p.step | 0) + 1}</dd>
     </dl>
@@ -161,6 +161,30 @@ function renderCard(id) {
   card.querySelector('.g').textContent = p.group;
   $('card-close').onclick = () => viewer.select(null);
   $('card-zoom').onclick = () => { viewer.focus(p.id); if (isNarrow()) closeDrawers(); };
+  const d = p.details;
+  if (d) {
+    const section = (title, body) => {
+      if (!body || (Array.isArray(body) && !body.length)) return;
+      const box = document.createElement('section');
+      const h = document.createElement('h4');
+      h.textContent = title;
+      box.appendChild(h);
+      if (Array.isArray(body)) {
+        const ul = document.createElement('ul');
+        for (const item of body) { const li = document.createElement('li'); li.textContent = item; ul.appendChild(li); }
+        box.appendChild(ul);
+      } else {
+        const para = document.createElement('p');
+        para.textContent = body;
+        box.appendChild(para);
+      }
+      card.appendChild(box);
+    };
+    section('How it works', d.howItWorks);
+    section('Made of', d.madeOf);
+    section('Key numbers', d.keyNumbers);
+    section('Did you know?', d.didYouKnow);
+  }
 }
 
 viewer.onSelect = (id) => {
