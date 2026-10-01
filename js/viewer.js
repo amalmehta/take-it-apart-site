@@ -77,6 +77,7 @@ export class Viewer {
       for (let k = 0; k < count; k++) {
         const spin = new THREE.Quaternion().setFromAxisAngle(UP, (k / count) * Math.PI * 2);
         const mesh = new THREE.Mesh(geometry, materialFor(part.material, part.color));
+        if (Array.isArray(part.scale) && part.scale.length === 3) mesh.scale.set(...part.scale.map((v) => Math.max(v, 0.001)));
         mesh.castShadow = mesh.receiveShadow = true;
         mesh.userData.partId = part.id;
         // radialOrigin (built-in examples): spin copies around their own centre and move them as one group.
@@ -160,7 +161,7 @@ export class Viewer {
         if (!inst.guide || inst.offset.lengthSq() < 1e-6) continue;
         const moved = inst.mesh.position.clone().sub(inst.base);
         if (moved.length() < 0.05 * this.scale) continue;
-        const now = inst.localCenter.clone().applyQuaternion(inst.mesh.quaternion).add(inst.mesh.position);
+        const now = inst.localCenter.clone().multiply(inst.mesh.scale).applyQuaternion(inst.mesh.quaternion).add(inst.mesh.position);
         const start = now.clone().sub(moved);
         verts.push(start.x, start.y, start.z, now.x, now.y, now.z);
       }
@@ -227,7 +228,7 @@ export class Viewer {
     const box = new THREE.Box3();
     for (const inst of subset) {
       const bb = inst.mesh.geometry.boundingBox;
-      const m = new THREE.Matrix4().compose(this.#positionAt(inst, t), inst.mesh.quaternion, new THREE.Vector3(1, 1, 1));
+      const m = new THREE.Matrix4().compose(this.#positionAt(inst, t), inst.mesh.quaternion, inst.mesh.scale);
       box.union(bb.clone().applyMatrix4(m));
     }
     return box;
@@ -238,7 +239,7 @@ export class Viewer {
     const world = this.container3d.matrixWorld;
     for (const inst of subset) {
       const bb = inst.mesh.geometry.boundingBox;
-      const m = new THREE.Matrix4().compose(this.#positionAt(inst, t), inst.mesh.quaternion, new THREE.Vector3(1, 1, 1)).premultiply(world);
+      const m = new THREE.Matrix4().compose(this.#positionAt(inst, t), inst.mesh.quaternion, inst.mesh.scale).premultiply(world);
       for (let i = 0; i < 8; i++) {
         pts.push(new THREE.Vector3(i & 1 ? bb.max.x : bb.min.x, i & 2 ? bb.max.y : bb.min.y, i & 4 ? bb.max.z : bb.min.z).applyMatrix4(m));
       }
