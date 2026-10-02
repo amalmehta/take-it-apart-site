@@ -239,17 +239,10 @@ $('toggle-inspector').onclick = () => {
     $('inspector').classList.contains('open') ? closeDrawers() : (closeDrawers(), openDrawer('inspector'));
   } else {
     $('inspector').classList.toggle('hidden');
-    syncInspectorToggle();
+    $('toggle-inspector').classList.toggle('active', !$('inspector').classList.contains('hidden'));
   }
 };
-const syncInspectorToggle = () =>
-  $('toggle-inspector').classList.toggle('active', !isNarrow() && !$('inspector').classList.contains('hidden'));
-syncInspectorToggle();
-// Drawers only exist on narrow screens; drop them (and the scrim) when the layout widens.
-matchMedia('(max-width: 820px)').addEventListener('change', (e) => {
-  if (!e.matches) closeDrawers();
-  syncInspectorToggle();
-});
+$('toggle-inspector').classList.toggle('active', !isNarrow());
 
 // ---------- New object ----------
 
