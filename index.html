@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -20,7 +20,7 @@
 </head>
 <body>
   <header class="topbar">
-    <button class="icon-btn only-narrow" id="toggle-sidebar" aria-label="Objects" title="Objects">
+    <button class="icon-btn" id="toggle-sidebar" aria-label="Objects" title="Show or hide the examples list">
       <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14"/></svg>
     </button>
     <div class="title">
@@ -36,7 +36,7 @@
   </header>
 
   <div class="layout">
-    <aside id="sidebar" class="panel">
+    <aside id="sidebar" class="panel hidden">
       <div class="panel-scroll">
         <h2>Examples</h2>
         <ul id="examples" class="object-list"></ul>
@@ -55,24 +55,52 @@
     </aside>
 
     <main id="stage">
+      <aside id="instruments" aria-label="Instruments"></aside>
+      <div id="scene">
       <div id="viewport"></div>
+      <svg id="callout-svg" aria-hidden="true"><polyline id="callout-line"/><circle id="callout-elbow" r="2"/><circle id="callout-dot" r="9"/><g id="callout-ring"><circle r="22"/></g></svg>
+      <div id="scan" hidden><div class="scan-head"><i class="ins-led"></i><span id="scan-state">SCANNING</span><span id="scan-pct">0%</span></div><div class="scan-track"><i id="scan-bar"></i></div><div id="scan-found"></div></div>
+      <div id="callout" hidden></div>
+      <div id="hover-label" hidden></div>
+      <div id="isolation" hidden><span>Showing only <strong id="isolation-name"></strong></span><button class="link" id="isolation-clear" aria-label="Show everything" title="Show the whole object again">✕</button></div>
       <div class="controlbar" role="group" aria-label="Take apart controls">
         <button class="icon-btn round" id="play" aria-label="Take it apart"></button>
-        <span class="lbl">Assembled</span>
-        <input type="range" id="explode" min="0" max="1" step="0.001" value="0" aria-label="How far apart">
-        <span class="lbl">Taken apart</span>
-        <label class="check"><input type="checkbox" id="guides" checked> Guide lines</label>
+        <button class="icon-btn step" id="stage-prev" aria-label="Previous stage" title="Put the last layer back (←)">‹</button>
+        <div class="slider">
+          <div id="stage-label" class="lbl" aria-live="polite"></div>
+          <div class="track">
+            <span class="lbl end">Assembled</span>
+            <div class="range-wrap">
+              <input type="range" id="explode" min="0" max="1" step="0.001" value="0" aria-label="How far apart">
+              <div id="ticks" aria-hidden="true"></div>
+            </div>
+            <span class="lbl end">Taken apart</span>
+          </div>
+        </div>
+        <button class="icon-btn step" id="stage-next" aria-label="Next stage" title="Take off the next layer (→)">›</button>
+        <div class="checks">
+          <label class="check"><input type="checkbox" id="guides" checked> Guide lines</label>
+          <label class="check" title="Colour each part by the assembly it belongs to (the colours match the parts list)"><input type="checkbox" id="color-groups"> Colour by assembly</label>
+        </div>
+      </div>
       </div>
     </main>
 
     <aside id="inspector" class="panel">
+      <div id="tabs" role="tablist" hidden>
+        <button role="tab" id="tab-parts" aria-selected="true">Parts</button>
+        <button role="tab" id="tab-principles" aria-selected="false">First principles</button>
+      </div>
+      <div id="principles" class="panel-scroll" hidden></div>
       <div id="part-card" hidden></div>
       <div id="about">
         <p id="summary"></p>
         <div id="overview" hidden><h3>What it is</h3><div id="overview-text"></div></div>
-        <p class="hint">Drag to orbit · scroll or pinch to zoom · right-drag to pan · tap a part to identify it · double-click a part in the list to zoom to it</p>
+        <h3>Its assemblies</h3>
+        <ul id="assemblies"></ul>
+        <p class="hint">Drag to orbit · scroll or pinch to zoom · right-drag to pan · tap a part to identify it · ← → take it apart a layer at a time · ↑ ↓ step through the parts · click an assembly to see it on its own</p>
       </div>
-      <input type="search" id="part-search" placeholder="Find a part" aria-label="Find a part">
+      <input type="search" id="part-search" placeholder="Find a part or what it does" aria-label="Find a part">
       <div id="parts" class="panel-scroll"></div>
     </aside>
   </div>

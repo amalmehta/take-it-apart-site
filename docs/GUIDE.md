@@ -12,12 +12,13 @@ Open **https://amalmehta.github.io/take-it-apart-site/** in a recent browser wit
 | Get close to a part | Double-click it in the list, or press **Zoom to Part** |
 | Get the whole view back | The crosshair button at the top right |
 | Find a part by name | Type in **Find a part** |
+| Understand it from first principles | Switch the right-hand panel from **Parts** to **First principles**: the problem, the core idea, the science underneath, why it's built this way, the hardest parts (click one to see it), the x factor and questions to test your intuition |
 
 On a phone, the ☰ button opens the object list and the panel button opens the parts list.
 
 ## Taking apart something new
 
-The thirty-four examples (a rocket, an electric car drive unit, a camera drone, a mechanical watch, a jet engine, a road bicycle, a family car, a light helicopter, a diesel-electric submarine, a crewed spacecraft, a sailing yacht, a farm tractor, a Shinkansen bullet train, the Eiffel Tower, an acoustic guitar, a grand piano, a DSLR camera, a smartphone, a laptop, wireless earbuds, a smartwatch, a tablet, a VR headset, a game console, a drone controller, a 3D printer, a robot vacuum, a smart speaker, a smart TV, a smart fridge, a washing machine, a space telescope, a quantum computer and a fusion reactor) need nothing. Each has a **What it is** overview in the parts panel explaining how the object works. To make new objects you need your own [Anthropic API key](https://console.anthropic.com/):
+The thirty-three examples (a rocket, an electric car drive unit, a camera drone, a mechanical watch, a jet engine, a road bicycle, a family car, a light helicopter, a diesel-electric submarine, a crewed spacecraft, a sailing yacht, a farm tractor, a Shinkansen bullet train, the Eiffel Tower, an acoustic guitar, a grand piano, a DSLR camera, a smartphone, a laptop, wireless earbuds, a VR headset, a game console, a 3D printer, a space telescope, a quantum computer, a fusion reactor, a humanoid robot, the original iPhone, an MRI scanner, a steam locomotive, an espresso machine, a wind turbine and an EUV lithography machine) need nothing; open the list with the ☰ button at the top left. Each has a **What it is** overview in the parts panel explaining how the object works, and a **First principles** explainer; Claude writes one for new objects too. To make new objects you need your own [Anthropic API key](https://console.anthropic.com/):
 
 1. Open **Settings** (bottom of the object list) and paste your key. It's saved in this browser only and sent straight to Anthropic, never anywhere else.
 2. Click **New Object…**, then type what it is ("a V8 car engine"), drop in a photo, or both.

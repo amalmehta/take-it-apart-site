@@ -24,7 +24,7 @@ export function buildBody(tpl, description, imageBase64) {
 export function decode(text, source) {
   let g;
   try { g = JSON.parse(text); } catch (e) { throw new ClaudeError(`Couldn't read the design Claude returned (${e.message}).`); }
-  return sanitize({ id: crypto.randomUUID(), name: g.name, summary: g.summary, parts: g.parts ?? [], source: source || 'Photo', createdAt: new Date().toISOString() });
+  return sanitize({ id: crypto.randomUUID(), name: g.name, summary: g.summary, parts: g.parts ?? [], firstPrinciples: g.firstPrinciples, source: source || 'Photo', createdAt: new Date().toISOString() });
 }
 
 /** Same repairs as Blueprint.sanitized() in Swift, so a sloppy response never breaks rendering. */
@@ -44,6 +44,10 @@ export function sanitize(b) {
       step: Math.max(0, Math.min(p.step | 0, 20)), radialCount: Math.max(1, Math.min(p.radialCount | 0 || 1, 72)),
     };
   });
+  if (b.firstPrinciples) {
+    // Keep only links to parts that exist, so a hard part never points at nothing.
+    for (const h of b.firstPrinciples.hardParts ?? []) h.partIDs = (h.partIDs ?? []).filter((id) => seen.has(id));
+  }
   return b;
 }
 
